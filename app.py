@@ -17,5 +17,3 @@ TDSession = TDClient(
 )
 
 TDSession.login()
-
-print(TDSession.get_quotes(instruments=['AAPL']))
