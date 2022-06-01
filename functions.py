@@ -8,6 +8,11 @@ import requests
 from dotenv import load_dotenv
 from td.client import TDClient
 import datetime as dt
+import hvplot.pandas
+import plotly.express as px
+
+
+
 load_dotenv()
 
 
@@ -51,7 +56,7 @@ def format_ameritrade_export(file_path):
     portfolio_data.dropna(inplace=True)
     portfolio_data["Date"] = pd.to_datetime(portfolio_data["Date"], format = '%m/%d/%Y')
     portfolio_data.set_index("Date", inplace = True)
-    portfolio_data["value"] = portfolio_data["value"].str.replace(',', '')
+    #portfolio_data["value"] = portfolio_data["value"].str.replace(',', '')
     portfolio_data["value"] = portfolio_data["value"].astype(float, errors = 'raise')
     portfolio_data.dropna(inplace=True)
     
@@ -65,7 +70,7 @@ def get_statistics(portfolio_data, spy_data, rf):
     rows = ["portfolio", "market"]
     
     daily_returns = portfolio_data["value"].pct_change()
-    spy_daily_returns = spy_data["Close"].pct_change()
+    spy_daily_returns = spy_data["close"].pct_change()
     portfolio_statistics.append(daily_returns)
     market_statistics.append(spy_daily_returns)
     
@@ -102,5 +107,39 @@ def get_statistics(portfolio_data, spy_data, rf):
     
     main = [statistics, portfolio_statistics, market_statistics]
     
-    return main
+    summary = pd.DataFrame({'statistics': statistics[2:7], 'portfolio_statistics' : portfolio_statistics[2:7], 'market_statistics' : market_statistics[2:7]}).set_index('statistics')
+    
+    plot_1 = market_statistics[1].hvplot.line(
+        subplots=True,
+        xlabel='Date',
+        ylabel='Cumulative Return',
+        color="lightgrey",
+        height=500,
+        width=1000,
+        label = "Selected Stock"
+    ).opts(
+        yformatter='%.2f',
+        line_color="blue",
+        hover_line_color="green",
+    )
+    plot_2 = portfolio_statistics[1].hvplot.line(
+        subplots=True,
+        xlabel='Date',
+        ylabel='Cumulative Return',
+        label = "Portfolio",
+        color="lightgrey",
+        height=500,
+        width=1000,
+    ).opts(
+        yformatter='%.2f',
+        line_color="purple",
+        hover_line_color="yellow"
+    )
+
+    #fig = px.line(portfolio_statistics,x = 'date', y = 'cum_returns')
+
+    plot = ""
+
+    return summary, plot
+
 
