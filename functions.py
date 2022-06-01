@@ -84,7 +84,7 @@ def get_statistics(portfolio_data, spy_data, rf):
     portfolio_statistics.append(average_annualized_returns)
     market_statistics.append(average_annualized_market_returns)
     
-    volatility = portfolio_data["value"].std()
+    volatility = daily_returns.std()
     market_volatility = spy_daily_returns.std()
     portfolio_statistics.append(volatility)
     market_statistics.append(market_volatility)
