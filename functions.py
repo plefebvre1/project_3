@@ -8,7 +8,6 @@ import requests
 from dotenv import load_dotenv
 from td.client import TDClient
 import datetime as dt
-import hvplot.pandas
 import plotly.express as px
 
 
@@ -109,37 +108,9 @@ def get_statistics(portfolio_data, spy_data, rf):
     
     summary = pd.DataFrame({'statistics': statistics[2:7], 'portfolio_statistics' : portfolio_statistics[2:7], 'market_statistics' : market_statistics[2:7]}).set_index('statistics')
     
-    plot_1 = market_statistics[1].hvplot.line(
-        subplots=True,
-        xlabel='Date',
-        ylabel='Cumulative Return',
-        color="lightgrey",
-        height=500,
-        width=1000,
-        label = "Selected Stock"
-    ).opts(
-        yformatter='%.2f',
-        line_color="blue",
-        hover_line_color="green",
-    )
-    plot_2 = portfolio_statistics[1].hvplot.line(
-        subplots=True,
-        xlabel='Date',
-        ylabel='Cumulative Return',
-        label = "Portfolio",
-        color="lightgrey",
-        height=500,
-        width=1000,
-    ).opts(
-        yformatter='%.2f',
-        line_color="purple",
-        hover_line_color="yellow"
-    )
-
-    #fig = px.line(portfolio_statistics,x = 'date', y = 'cum_returns')
-
-    plot = ""
-
+    plot_df = pd.DataFrame({"portfolio" : main[1][1], 'market' : main[2][1]})
+    plot = px.line(plot_df, x=plot_df.index, y=['portfolio','market'], title='Cumulative Returns - Market vs Portfolio')
+    
     return summary, plot
 
 

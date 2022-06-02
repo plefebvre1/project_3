@@ -28,7 +28,7 @@ TDSession.login()
 
 # Add a title for the page
 st.markdown("## TD Ameritrade Account Metrics")
-st.markdown("# Use this site to compare your account to any desired market account or ticker.")
+st.markdown("### Use this site to compare your account to any desired market account or ticker.")
 
 # Streamlit user inputs
 account_path = st.text_input("Account File Path")
@@ -47,5 +47,4 @@ if st.button("Compare"):
     account_data = format_ameritrade_export(account_path)
     summary_df, plot = get_statistics(account_data,market_data,rf)
     st.write(summary_df)
-    #st.plotly_chart(plot)
-    st.balloons()
+    st.plotly_chart(plot)
